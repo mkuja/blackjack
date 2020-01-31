@@ -1,0 +1,50 @@
+
+.player {
+  display: flex;
+  flow-direction: row;
+  margin-left: 40px;
+}
+
+.main-container {
+  width: 992px;
+}
+
+.main-buttons {
+  margin-bottom: 40px
+}
+
+.play-buttons {
+  margin-left: 5px;
+  margin-bottom: 2px;
+}
+
+.player {
+  height: 250px;
+}
+
+.cards {
+  margin-left: 40px;
+}
+
+.first-card {
+}
+
+.second-card {
+  transform: translateX(-65px);
+}
+
+.third-card {
+  transform: translateX(-130px);
+}
+
+.fourth-card {
+  transform: translateX(-195px);
+}
+
+.fifth-card {
+  transform: translateX(-260px);
+}
+
+.split-hand {
+  transform: translate(-255px, 60px);
+}
