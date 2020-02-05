@@ -17,5 +17,5 @@ class User(Resource):
             new_user = UserModel(args['username'], args['password'])
             db.session.add(new_user)
             db.session.commit() # Write to db.
-            return {'message': f'User {args["username"]} was created.'}, 200
+            return {'message': f'User {args["username"]} was created.'}, 201
 
