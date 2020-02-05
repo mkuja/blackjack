@@ -5,6 +5,7 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import divWithClassName from "react-bootstrap/cjs/divWithClassName";
 
 let hand={
    name : 'Mikko',
@@ -20,19 +21,30 @@ let hand={
             React.createElement(Button, {variant: 'secondary', size:'sm'}, "Give up")]
 }
 
+function isLoggedIn() {
+   return false;
+}
+
+function logInDiv() {
+   return(
+      <div></div>
+   )
+}
+
 function App() {
   return (
     <div className="main-container">
+       {isLoggedIn() ? "true" : "false"}
        <div className="main-buttons">
          <ButtonGroup>
             <Button variant="secondary">New game</Button>
-            <Button variant="secondary">Guest</Button>
+            <Button variant="secondary">Log in</Button>
             <Button variant="secondary">Stats</Button>
          </ButtonGroup>
        </div>
        <div className="player">
-         <Hand name="Mikko" cards={hand.cards} buttons={hand.buttons}/>
-         <Hand name="Jeba" isSplit cards={hand.cards} buttons={hand.buttons} className="split-hand"/>
+         <Hand name="Player" cards={hand.cards} buttons={hand.buttons}/>
+         <Hand name="Player" isSplit cards={hand.cards} buttons={hand.buttons} className="split-hand"/>
        </div>
        <div className="player">
           <Hand name={"Computer"} cards={hand.cards} buttons={hand.buttons} isDealer />
