@@ -1,12 +1,12 @@
 from flask import Flask, render_template
 from flask_restful import Api
-from flask_jwt import JWT, jwt_required, timedelta
-from blackjack.security import authenticate, identity
-from blackjack.db import db
+from flask_jwt import JWT, timedelta
+from security import authenticate, identity
+from db import db
 
 import os.path
 
-from blackjack.resources.user import User
+from resources.user import User
 
 # Config
 app = Flask(__name__, static_folder="build/static", template_folder="build")
@@ -30,7 +30,6 @@ api.add_resource(User, '/user')
 
 @app.route("/")
 def react_app():
-    from blackjack.db import db
     return render_template('index.html')
 
 app.debug=True

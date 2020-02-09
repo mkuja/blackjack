@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse
-from blackjack.models.user import User as UserModel
-from blackjack.db import db
+from models.user import User as UserModel
+from db import db
 
 
 class User(Resource):
