@@ -1,8 +1,13 @@
+import os
+import sys
+
+sys.path.append(os.getcwd())
+
 import unittest
-from models import User
+from models.user import User
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask
-import db
+
 
 
 class TestUserModel(unittest.TestCase):
@@ -21,9 +26,6 @@ class TestUserModel(unittest.TestCase):
         self.db = db
         db.drop_all()
         db.create_all()
-
-        # Disable sending emails during unit testing
-        #mail.init_app(app)
         self.assertEqual(app.debug, False)
 
     def tearDown(self) -> None:
@@ -31,11 +33,10 @@ class TestUserModel(unittest.TestCase):
 
     def test_user_create(self):
         user = User('herne543567', 'salasana')
-        db.session.add(user)
+        self.db.session.add(user)
         fuser = user.find_by_username("herne543567")
         self.assertEqual(fuser.id, user.id)
 
 
 if __name__ == '__main__':
-    # Some initialization
     unittest.main()

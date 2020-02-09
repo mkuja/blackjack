@@ -6,7 +6,7 @@ from db import db
 
 import os.path
 
-from resources.user import User
+from resources.signin import SignIn
 
 # Config
 app = Flask(__name__, static_folder="build/static", template_folder="build")
@@ -25,7 +25,7 @@ jwt = JWT(app, authenticate, identity)
 
 # Resource endpoints.
 api = Api(app)
-api.add_resource(User, '/user')
+api.add_resource(SignIn, '/user')
 
 
 @app.route("/")

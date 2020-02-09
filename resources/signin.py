@@ -3,7 +3,7 @@ from models.user import User as UserModel
 from db import db
 
 
-class User(Resource):
+class SignIn(Resource):
 
     def post(self):
         """"Create a new user, if doesn't exist."""
