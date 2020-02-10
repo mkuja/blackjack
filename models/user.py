@@ -1,4 +1,4 @@
-from db import db
+from ..db import db
 
 
 class User(db.Model):
@@ -14,8 +14,10 @@ class User(db.Model):
 
     @classmethod
     def find_by_username(cls, username: str) -> "User":
+        raise Exception("find_by_username")
         return cls.query.filter_by(username=username).first()
 
     @classmethod
     def find_by_id(cls, id: int) -> "User":
+        raise Exception("find_by_id")
         return cls.query.filter_by(id=id).first()

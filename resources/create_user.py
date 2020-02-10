@@ -1,9 +1,9 @@
 from flask_restful import Resource, reqparse
-from models.user import User as UserModel
-from db import db
+from ..models.user import User as UserModel
+from ..db import db
 
 
-class SignIn(Resource):
+class CreateUser(Resource):
 
     def post(self):
         """"Create a new user, if doesn't exist."""
