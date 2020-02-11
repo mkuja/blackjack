@@ -1,8 +1,12 @@
 
 from flask_restful import Resource, reqparse
-# from ..models.user import User as UserModel
-# from ..db import db
-from flask_jwt import jwt_required, current_identity
+from flask_jwt_extended import jwt_required, get_current_user  # Only identified players may play.
+
+# Database stuff
+from ..db import db
+from ..models.game_table import GameTable
+from ..models.player import Player
+from ..models.hand import Hand
 
 
 class Play(Resource):
@@ -33,5 +37,20 @@ class Play(Resource):
 
         The hand (list containing cards) may have another hand for if user has split her hand.
         """
-        raise Exception("Play.post")
-        return {"jeejee": "joojoo"}, 200
+        parser = reqparse.RequestParser()
+        parser.add_argument('action', type=str, required=True)
+        action = parser.parse_args().get('action', None)
+        if action == 'new_game':
+            return get_current_user()
+        elif action == 'give_up':
+            pass
+        elif action == 'split':
+            pass
+        elif action == 'insure':
+            pass
+        elif action == 'stay':
+            pass
+        elif action == 'more':
+            pass
+        else:
+            raise Exception("No valid action in json.")

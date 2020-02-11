@@ -1,6 +1,7 @@
 from db import db
-from models import Hand
+from models.hand import Hand
 from errors import ArgumentError
+
 
 class Player(db.Model):
     """Player models a player in game. Player has up to two hands of cards."""

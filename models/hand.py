@@ -1,6 +1,7 @@
 from db import db
 from errors import HandFullError
 
+
 class Hand(db.Model):
     """Hand models a Player's hand, and has up to five cards."""
 
