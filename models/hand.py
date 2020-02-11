@@ -5,6 +5,7 @@ from errors import HandFullError
 class Hand(db.Model):
     """Hand models a Player's hand, and has up to five cards."""
 
+    __tablename__ = 'hand'
     id = db.Column(db.Integer, primary_key=True)
     card1 = db.Column(db.CHAR(length=4))
     card2 = db.Column(db.CHAR(length=4))
@@ -12,7 +13,7 @@ class Hand(db.Model):
     card4 = db.Column(db.CHAR(length=4))
     card5 = db.Column(db.CHAR(length=4))
 
-    def __init__(self, *cards: list):
+    def __init__(self, *cards: str):
         """Argument cards is a list of cards to initialize a Hand with.
 
         A card is a string in the format of value+kind.
@@ -26,7 +27,7 @@ class Hand(db.Model):
             honourables."""
         if len(cards) > 5:
             raise ArgumentError("Too many arguments; A hand can hold a maximum of five cards.")
-        cards = cards + (5-len(cards)) * [db.null]
+        cards = cards + tuple((5-len(cards)) * [db.null])
         self.card1,
         self.card2,
         self.card3,

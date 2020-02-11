@@ -1,4 +1,4 @@
-from .models.user import User
+from models.user import User
 from werkzeug.security import safe_str_cmp
 
 

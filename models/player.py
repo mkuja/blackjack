@@ -6,9 +6,10 @@ from errors import ArgumentError
 class Player(db.Model):
     """Player models a player in game. Player has up to two hands of cards."""
 
+    __tablename__ = "player"
     id = db.Column(db.Integer, primary_key=True)
-    hand1 = db.ForeignKey("Hand.id")
-    hand2 = db.ForeignKey("Hand.id")
+    hand1 = db.relation(db.Integer, db.ForeignKey("hand.id"))
+    hand2 = db.relation(db.Integer, db.ForeignKey("hand.id"))
 
     def __init__(self, hand1=db.null, hand2=db.null):
         if hand2 != db.null and hand1 == db.null:
