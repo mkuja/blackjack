@@ -10,9 +10,9 @@ from flask_jwt_extended import (
 import os.path
 
 # Resources
-from .resources.create_user import CreateUser
-from .resources.log_in import LogIn
-from .resources.play import Play
+from resources.create_user import CreateUser
+from resources.log_in import LogIn
+from resources.play import Play
 
 # Config
 app = Flask(__name__, static_folder="build/static", template_folder="build")
@@ -21,12 +21,14 @@ app.secret_key = 'test'
 # app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=1800)
 app.config['PROPAGATE_EXCEPTIONS'] = True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 
-db.init_app(app)
-
+os.unlink('test.db')
 if not os.path.isfile("test.db"):
+    db.init_app(app)
     db.create_all(app=app)
+
+
 
 api = Api(app)
 jwt = JWTManager(app)

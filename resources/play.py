@@ -41,23 +41,18 @@ class Play(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('action', type=str, required=True)
         action = parser.parse_args().get('action', None)
-        if action == 'new_game':
-            game = GameTable(
-                Player(
-                    Hand(
-                        BJ.draw_card(),
-                        BJ.draw_card()
-                    )
-                ),
-                Player(
-                    Hand(
-                        BJ.draw_card(),
-                        BJ.draw_card()
-                    ),
-                )
-            )
 
-            db.session.add(game)
+        if action == 'new_game':
+            player_hand = Hand(BJ.draw_card(), BJ.draw_card())
+            computer_hand = Hand(BJ.draw_card(), BJ.draw_card())
+            player_player = Player(player_hand)
+            computer_player = Player(computer_hand)
+            table = GameTable(player=player_player, computer=computer_player)
+            db.session.add(player_hand)
+            db.session.add(computer_hand)
+            db.session.add(player_player)
+            db.session.add(computer_player)
+            db.session.add(table)
             db.session.commit()
             return {'username': get_jwt_identity(),
                     'player_hands': [
@@ -76,8 +71,6 @@ class Play(Resource):
                         'fourth_card': 4,
                         'fifth_card': 5
                     }]}
-
-            return get_jwt_identity()
         elif action == 'give_up':
             pass
         elif action == 'split':

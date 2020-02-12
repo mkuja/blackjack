@@ -7,9 +7,9 @@ class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(80))
+    password = db.Column(db.String(80), nullable=False)
     # One-to-one relationship. The current unfinished game, if any.
-    #game = db.relation(db.Integer, db.ForeignKey('game_table.id'), uselist=False)
+    # game_id = db.relation(db.Integer, db.ForeignKey('game_table.id'), uselist=False)
 
     def __init__(self, username, password):
         self.username = username
@@ -18,8 +18,6 @@ class User(db.Model):
 
     @classmethod
     def find_by_username(cls, username: str) -> "User":
-        import pdb;
-        pdb.set_trace()
         return cls.query.filter_by(username=username).first()
 
 

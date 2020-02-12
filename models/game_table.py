@@ -9,14 +9,11 @@ class GameTable(db.Model):
 
     __tablename__ = "game_table"
     id = db.Column(db.Integer(), primary_key=True)
-    player = db.Column(db.ForeignKey("player.id"), nullable=False)
-    computer = db.Column(db.ForeignKey("player.id"), nullable=False)
-    #owner = db.Column(db.Integer, db.ForeignKey('user.id'))
-
-    def __init__(self, player: Player, computer: Player):
-        self.player = player
-        self.computer = computer
-        #self.owner = owner
+    player_id = db.Column(db.Integer, db.ForeignKey("player.id"), nullable=False)
+    computer_id = db.Column(db.Integer, db.ForeignKey("player.id"), nullable=False)
+    player = db.relationship('Player', foreign_keys=[player_id])
+    computer = db.relationship('Player', foreign_keys=[computer_id])
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     @classmethod
     def find_by_id(cls, id):

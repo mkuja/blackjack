@@ -8,23 +8,23 @@ class Player(db.Model):
 
     __tablename__ = "player"
     id = db.Column(db.Integer, primary_key=True)
-    hand1 = db.relation(db.Integer, db.ForeignKey("hand.id"))
-    hand2 = db.relation(db.Integer, db.ForeignKey("hand.id"))
+    hand_id1 = db.Column(db.Integer, db.ForeignKey("hand.id"))
+    hand_id2 = db.Column(db.Integer, db.ForeignKey("hand.id"), nullable=True)
+    hand1 = db.relationship('Hand', foreign_keys=[hand_id1])
+    hand2 = db.relationship('Hand', foreign_keys=[hand_id2])
 
-    def __init__(self, hand1=db.null, hand2=db.null):
-        if hand2 != db.null and hand1 == db.null:
-            raise ArgumentError("Can't have hand2 set while hand1 is unset.")
-        self.hand1 = hand1
-        self.hand2 = hand2
+    def __init__(self, hand1: Hand, hand2=None):
+        self.hand_id1 = hand1.id
+        self.hand_id2 = hand2.id if hand2 else hand2
 
     def add_hand(self, hand: Hand) -> None:
         """Add a Hand to the player."""
-        if self.hand1 == db.null and self.hand2 == db.null:
+        if self.hand1 and self.hand2:
             raise ArgumentError(
                 "Trying to add a hand to player who already has 2 hands. A player can't have a third hand.")
-        elif self.hand1 == db.null:
+        elif not self.hand1:
             self.hand1 = hand
-        elif self.hand2 == db.null:
+        else:
             self.hand2 = hand
 
     @classmethod

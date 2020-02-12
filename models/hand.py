@@ -1,5 +1,5 @@
 from db import db
-from errors import HandFullError
+from errors import HandFullError, ArgumentError
 
 
 class Hand(db.Model):
@@ -7,11 +7,11 @@ class Hand(db.Model):
 
     __tablename__ = 'hand'
     id = db.Column(db.Integer, primary_key=True)
-    card1 = db.Column(db.CHAR(length=4))
-    card2 = db.Column(db.CHAR(length=4))
-    card3 = db.Column(db.CHAR(length=4))
-    card4 = db.Column(db.CHAR(length=4))
-    card5 = db.Column(db.CHAR(length=4))
+    card1 = db.Column(db.String(4), nullable=True)
+    card2 = db.Column(db.String(4), nullable=True)
+    card3 = db.Column(db.String(4), nullable=True)
+    card4 = db.Column(db.String(4), nullable=True)
+    card5 = db.Column(db.String(4), nullable=True)
 
     def __init__(self, *cards: str):
         """Argument cards is a list of cards to initialize a Hand with.
@@ -27,24 +27,20 @@ class Hand(db.Model):
             honourables."""
         if len(cards) > 5:
             raise ArgumentError("Too many arguments; A hand can hold a maximum of five cards.")
-        cards = cards + tuple((5-len(cards)) * [db.null])
-        self.card1,
-        self.card2,
-        self.card3,
-        self.card4,
-        self.card5 = cards
+        cards = cards + tuple((5-len(cards)) * [None])
+        self.card1, self.card2, self.card3, self.card4, self.card5 = cards
 
     def put_card(self, card: str) -> "Hand":
         """Put a card in hand."""
-        if self.card1 == db.null:
+        if not self.card1:
             self.card1 = card
-        elif self.card2 == db.null:
+        elif not self.card2:
             self.card2 = card
-        elif self.card3 == db.null:
+        elif not self.card3:
             self.card3 = card
-        elif self.card4 == db.null:
+        elif not self.card4:
             self.card4 = card
-        elif self.card5 == db.null:
+        elif not self.card5:
             self.card5 = card
         else:
             raise HandFullError("This hand is already full. You can't add more cards to it.")
