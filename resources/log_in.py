@@ -11,9 +11,10 @@ class LogIn(Resource):
         parser.add_argument('username', type=str, required=True)
         parser.add_argument('password', type=str, required=True)
         args = parser.parse_args()
-        user_actual_password = UserModel.find_by_username(args.get('username', None)).password
+        user_actual_password = UserModel.find_by_username(args.get('username', None))
+        user_actual_password = None if not user_actual_password else user_actual_password.password
         # If login success
-        if user_actual_password is not None and user_actual_password == args.get('password'):
+        if user_actual_password and user_actual_password == args.get('password'):
             access_token = create_access_token(identity=args.get('username'))
             return {"access_token": access_token}, 200
         else:

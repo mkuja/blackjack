@@ -2,6 +2,7 @@
 from random import random
 from math import floor
 from models.hand import Hand
+from models.user import User
 
 
 class Blackjack:
@@ -49,12 +50,10 @@ class Blackjack:
     @staticmethod
     def is_splittable(hand: Hand):
         """Returns True if hand is a pair. False otherwise."""
-        if hand.card3:
-            return False
-        elif hand.card1 == hand.card2 and hand.card2:
+        if hand.card1 == hand.card2 and hand.card2 and not hand.card3:
             return True
         else:
-            raise Exception("Unknown error happened.")
+            return False
 
     @staticmethod
     def decide_winner_hand(dealer_hand: Hand, player_hand: Hand) -> int:
@@ -68,3 +67,30 @@ class Blackjack:
             return 1
         else:
             return player_hand - dealer_hand  # Bigger hand shall win.
+
+    @staticmethod
+    def get_legit_actions(hand: Hand):
+        # TODO: Implement.
+        # Possible: split, give_up, new_game, more, stay, insure
+        if hand.hand_over:
+            return ['new_game']
+        ret = ['split'] if Blackjack.is_splittable(hand) else []
+        ret.append('give_up')
+        ret.append('new_game')
+        ret.append('more')
+        ret.append('stay')
+        # ret.append('insure')
+        return ret
+
+    @classmethod
+    def draw_for_computer(cls, owner: User):
+        computer_hand = owner.table.computer.hand1
+        while BJ.evaluate_hand(computer_hand) < 17:
+            if not computer_hand.card3:
+                computer_hand.card3 = cls.draw_card()
+            elif not computer_hand.card4:
+                computer_hand.card4 = cls.draw_card()
+            elif not computer_hand.card5:
+                computer_hand.card5 = cls.draw_card()
+            else:
+                raise Exception("Dealer already has blackjack with five cards.")

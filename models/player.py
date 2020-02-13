@@ -13,10 +13,6 @@ class Player(db.Model):
     hand1 = db.relationship('Hand', foreign_keys=[hand_id1])
     hand2 = db.relationship('Hand', foreign_keys=[hand_id2])
 
-    def __init__(self, hand1: Hand, hand2=None):
-        self.hand_id1 = hand1.id
-        self.hand_id2 = hand2.id if hand2 else hand2
-
     def add_hand(self, hand: Hand) -> None:
         """Add a Hand to the player."""
         if self.hand1 and self.hand2:

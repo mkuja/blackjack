@@ -8,8 +8,10 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(80), nullable=False)
-    # One-to-one relationship. The current unfinished game, if any.
-    # game_id = db.relation(db.Integer, db.ForeignKey('game_table.id'), uselist=False)
+    # One-to-many relationship. The current unfinished game, if any.
+    table_id = db.Column(db.Integer, unique=True, nullable=True)
+    table = db.relationship("GameTable", uselist=False)
+
 
     def __init__(self, username, password):
         self.username = username

@@ -6,6 +6,7 @@ from db import db
 from models.game_table import GameTable
 from models.player import Player
 from models.hand import Hand
+from models.user import User
 
 from controllers.blackjack import Blackjack as BJ
 
@@ -28,7 +29,6 @@ class Play(Resource):
                 "third_card": somecard3,
                 "fourth_card": somecard4,
                 "fifth_card": "none",
-                "hand_state": "won"|"lost"|"pending"|"tie"}
             ],
             "computer_hand": [
                 { ... Same as hands, except the list will contain only one hand ... }
@@ -43,43 +43,75 @@ class Play(Resource):
         action = parser.parse_args().get('action', None)
 
         if action == 'new_game':
-            player_hand = Hand(BJ.draw_card(), BJ.draw_card())
-            computer_hand = Hand(BJ.draw_card(), BJ.draw_card())
-            player_player = Player(player_hand)
-            computer_player = Player(computer_hand)
-            table = GameTable(player=player_player, computer=computer_player)
-            db.session.add(player_hand)
-            db.session.add(computer_hand)
-            db.session.add(player_player)
-            db.session.add(computer_player)
-            db.session.add(table)
+            player_hand = Hand(card1=BJ.draw_card(), card2=BJ.draw_card())
+            computer_hand = Hand(card1=BJ.draw_card(), card2=BJ.draw_card())
+            player_player = Player(hand1=player_hand)
+            computer_player = Player(hand1=computer_hand)
+            owner = User.find_by_username(get_jwt_identity())
+            GameTable(player=player_player, computer=computer_player, owner=owner)
+            db.session.add(owner)
             db.session.commit()
-            return {'username': get_jwt_identity(),
-                    'player_hands': [
-                        {
-                            'first_card': 1,
-                            'second_card': 2,
-                            'third_card': 3,
-                            'fourth_card': 4,
-                            'fifth_card': 5
-                        }
-                    ],
-                    'computer_hand': [{
-                        'first_card': 1,
-                        'second_card': 2,
-                        'third_card': 3,
-                        'fourth_card': 4,
-                        'fifth_card': 5
-                    }]}
+            return self.to_json(owner)
         elif action == 'give_up':
             pass
         elif action == 'split':
-            pass
+            # Allow only one split when 2nd hand is empty and when have exactly 2 cards of same value in hand.
+            owner = User.find_by_username(get_jwt_identity())
+            h1 = owner.table.player.hand1
+            h2 = owner.table.player.hand2
+            if not h2 and h1.card1 == h1.card2 and not h1.card3:
+                h2.card1 = h1.card2
+                h1.card2 = None
+                db.session.add(owner)
+                db.commit()
+            else:
+                return {'msg': "Split is allowed only on initial two cards of same value, and only once."}
         elif action == 'insure':
             pass
         elif action == 'stay':
-            pass
+            owner = User.find_by_username(get_jwt_identity())
+            self.draw_for_computer(owner)
         elif action == 'more':
-            pass
+            #  Get the game for the current user
+            user = User.find_by_username(get_jwt_identity())
+            if not user.table:
+                return {'msg': 'No open table for current user.'}
+            user.table.player.hand1.put_card(BJ.draw_card())
+            db.session.add(user)
+            db.session.commit()
+            return self.to_json(user)
         else:
             raise Exception("No valid action in json.")
+
+    def to_json(self, owner):
+        return {'username': owner.username,
+                'player_hands': [
+                    {
+                        'first_card': owner.table.player.hand1.card1,
+                        'second_card': owner.table.player.hand1.card2,
+                        'third_card': owner.table.player.hand1.card3,
+                        'fourth_card': owner.table.player.hand1.card4,
+                        'fifth_card': owner.table.player.hand1.card5,
+                        'legit_moves': BJ.get_legit_actions(owner.table.player.hand1),
+                        'hand_value': BJ.evaluate_hand(owner.table.player.hand1),
+                        'hand_over': owner.table.player.hand1.hand_over
+                    },{
+                        'first_card': owner.table.player.hand2.card1,
+                        'second_card': owner.table.player.hand2.card2,
+                        'third_card': owner.table.player.hand2.card3,
+                        'fourth_card': owner.table.player.hand2.card4,
+                        'fifth_card': owner.table.player.hand2.card5,
+                        'legit_moves': BJ.get_legit_actions(owner.table.player.hand2),
+                        'hand_value': BJ.evaluate_hand(owner.table.player.hand2),
+                        'hand_over': owner.table.player.hand2.hand_over
+                    }],
+                'computer_hand': {
+                        'first_card': owner.table.computer.hand1.card1,
+                        'second_card': owner.table.computer.hand1.card2,
+                        'third_card': owner.table.computer.hand1.card3,
+                        'fourth_card': owner.table.computer.hand1.card4,
+                        'fifth_card': owner.table.computer.hand1.card5,
+                        'hand_value': BJ.evaluate_hand(owner.table.computer.hand1),
+                        'hand_over': owner.table.computer.hand1.hand_over
+                    }
+                }
